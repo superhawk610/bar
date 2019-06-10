@@ -154,6 +154,8 @@ b := bar.NewWithOpts(
 )
 ```
 
+You'll also probably want to include a default value for each custom verb using the `WithContext` helper mentioned above.
+
 Then, whenever ticking or updating your progress bar, provide a `Context` slice with the value(s) you'd like to have displayed in their place. Use the `Ctx` helper to clean up the syntax:
 
 ```go
