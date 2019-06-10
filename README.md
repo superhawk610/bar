@@ -169,6 +169,15 @@ This will produce the following output:
 
 ```
 [----->            ] Hello, world!
+
+```
+
+### `WithDebug()`
+
+Debugging crowded layouts can be difficult, so this helper swaps each bar component's `print()` method for its `debug()` method, displaying its internal state and type.
+
+```
+ <barToken p={4} t={10}> <percentToken "40.0%"> <customVerbToken verb="hello" value="Hello!">
 ```
 
 ## License
