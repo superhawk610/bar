@@ -16,6 +16,7 @@ type barOpts struct {
 	formatString               string
 	callback                   func()
 	output                     Output
+	context                    Context
 }
 
 type augment func(*barOpts)
@@ -77,9 +78,10 @@ func NewWithOpts(opts ...func(o *barOpts)) *Bar {
 		startedAt:    time.Now(),
 		rate:         0,
 		formatString: o.formatString,
-		format:       tokenize(o.formatString, nil),
+		format:       tokenize(o.formatString, o.context.customVerbs()),
 		callback:     o.callback,
 		output:       o.output,
+		context:      o.context,
 	}
 }
 
@@ -130,5 +132,13 @@ func WithCallback(cb func()) augment {
 func WithOutput(out Output) augment {
 	return func(o *barOpts) {
 		o.output = out
+	}
+}
+
+// WithContext augments an options constructor by setting the initial values
+// for the bar's context
+func WithContext(ctx Context) augment {
+	return func(o *barOpts) {
+		o.context = ctx
 	}
 }

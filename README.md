@@ -65,6 +65,10 @@ Provide dimensions for the total value of the progress bar and its output width.
 
 Provide an output stream for displaying the progress bar. `Output` is essentially an `io.Writer`, but it also exposes a `ClearLine()` function to clear the current line of output and return the cursor to the first index. By default, this uses `os.Stdout`.
 
+### `WithContext(ctx Context)`
+
+Provide an initial value for the bar's context (read more about how to use context with custom verbs below).
+
 ### `WithFormat(f string)`
 
 Provide an ordering of verbs to be used when outputting the progress bar. You can choose from the standard included verbs `:bar`, `:progress`, and `:rate`, or you can provide your own verbs using the `Ctx` helper (verbs must always be prefixed with `:`):
