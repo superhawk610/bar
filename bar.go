@@ -37,6 +37,14 @@ type Context []*ContextValue
 
 // Ctx is a helper for creating a ContextValue tuple
 func Ctx(verb string, value interface{}) *ContextValue {
+	if verb[0] == ':' {
+		panic(fmt.Sprintf("don't prefix your custom verb declaration with a `:`, it's implied (at %s)", verb))
+	}
+
+	if verb == "bar" || verb == "percent" || verb == "rate" {
+		panic(fmt.Sprintf(":%s is a reserved verb, please choose another name", verb))
+	}
+
 	return &ContextValue{
 		verb:  verb,
 		value: newStringish(value),
@@ -99,8 +107,6 @@ func (b *Bar) Update(progress int, ctx Context) {
 	b.progress = progress
 
 	if ctx != nil {
-		fmt.Println("overriding ctx")
-		fmt.Println(len(ctx))
 		b.context = ctx
 		b.format = tokenize(b.formatString, ctx.customVerbs())
 	}
