@@ -15,7 +15,10 @@ type barOpts struct {
 	complete, head, incomplete string
 	formatString               string
 	callback                   func()
+	output                     Output
 }
+
+type augment func(*barOpts)
 
 // NewWithFormat creates a new instance of bar.Bar with the given total
 // and format and returns a reference to it
@@ -35,6 +38,7 @@ func NewWithFormat(t int, f string) *Bar {
 		formatString: f,
 		format:       tokenize(f, nil),
 		callback:     noop,
+		output:       &stdout{},
 	}
 }
 
@@ -49,10 +53,11 @@ func NewWithOpts(opts ...func(o *barOpts)) *Bar {
 		end:          ")",
 		formatString: defaultFormat,
 		callback:     noop,
+		output:       &stdout{},
 	}
 
-	for _, augment := range opts {
-		augment(o)
+	for _, aug := range opts {
+		aug(o)
 	}
 
 	if o.width <= 0 {
@@ -74,6 +79,7 @@ func NewWithOpts(opts ...func(o *barOpts)) *Bar {
 		formatString: o.formatString,
 		format:       tokenize(o.formatString, nil),
 		callback:     o.callback,
+		output:       o.output,
 	}
 }
 
@@ -86,7 +92,7 @@ func NewWithOpts(opts ...func(o *barOpts)) *Bar {
 // | |   |- head
 // | |- complete
 // |- start
-func WithDisplay(start, complete, head, incomplete, end string) func(*barOpts) {
+func WithDisplay(start, complete, head, incomplete, end string) augment {
 	return func(o *barOpts) {
 		o.start = start
 		o.complete = complete
@@ -98,7 +104,7 @@ func WithDisplay(start, complete, head, incomplete, end string) func(*barOpts) {
 
 // WithDimensions augments an options constructor by customizing the
 // bar's width and total
-func WithDimensions(total, width int) func(*barOpts) {
+func WithDimensions(total, width int) augment {
 	return func(o *barOpts) {
 		o.total = total
 		o.width = width
@@ -107,15 +113,22 @@ func WithDimensions(total, width int) func(*barOpts) {
 
 // WithFormat augments an options constructor by customizing the bar's
 // output format
-func WithFormat(f string) func(*barOpts) {
+func WithFormat(f string) augment {
 	return func(o *barOpts) {
 		o.formatString = f
 	}
 }
 
 // WithCallback augments an options constructor by setting a callback
-func WithCallback(cb func()) func(*barOpts) {
+func WithCallback(cb func()) augment {
 	return func(o *barOpts) {
 		o.callback = cb
+	}
+}
+
+// WithOutput augments an options constructor by setting the output stream
+func WithOutput(out Output) augment {
+	return func(o *barOpts) {
+		o.output = out
 	}
 }

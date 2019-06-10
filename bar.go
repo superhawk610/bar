@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"os"
 	"time"
-
-	"github.com/superhawk610/terminal"
 )
 
 var noop = func() {}
@@ -24,6 +22,7 @@ type Bar struct {
 	format                     []token
 	context                    []*ContextValue
 	callback                   func()
+	output                     Output
 }
 
 // ContextValue is a tuple that defines a substitution for a custom verb
@@ -63,6 +62,7 @@ func New(t int) *Bar {
 		formatString: defaultFormat,
 		format:       tokenize(defaultFormat, []string{}),
 		callback:     noop,
+		output:       &stdout{},
 	}
 }
 
@@ -102,13 +102,14 @@ func (b *Bar) Update(progress int, ctx Context) {
 		b.format = tokenize(b.formatString, ctx.customVerbs())
 	}
 
-	terminal.Overwritef("%s", b)
+	b.write()
 }
 
 // Done finalizes the bar and prints it followed by a new line
 func (b *Bar) Done() {
 	b.closed = true
-	terminal.Overwritef("%s\n", b)
+	b.write()
+	fmt.Println()
 	b.callback()
 }
 
@@ -118,15 +119,20 @@ func (b *Bar) Interrupt(s string) {
 		return
 	}
 
-	terminal.ClearLine()
+	b.output.ClearLine()
 	fmt.Println(s)
-	terminal.Overwritef("%s", b)
+	b.write()
 }
 
 // Interruptf passes the given input to fmt.Sprintf and prints
 // it above the bar
 func (b *Bar) Interruptf(format string, s ...interface{}) {
 	b.Interrupt(fmt.Sprintf(format, s...))
+}
+
+func (b *Bar) write() {
+	b.output.ClearLine()
+	b.output.Printf("%s", b)
 }
 
 func (b *Bar) canUpdate(method string) bool {

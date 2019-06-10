@@ -44,7 +44,7 @@ This package uses the [functional options pattern](https://halls-of-valhalla.org
 
 Provide a callback function to be executed when the bar is completed via `b.Done()`.
 
-### `WithDisplay`
+### `WithDisplay(start, complete, head, incomplete, end string)`
 
 Provide display characters to be used when outputting the bar to the terminal.
 
@@ -57,11 +57,15 @@ Provide display characters to be used when outputting the bar to the terminal.
 |- start
 ```
 
-### `WithDimensions`
+### `WithDimensions(total, width int)`
 
 Provide dimensions for the total value of the progress bar and its output width.
 
-### `WithFormat`
+### `WithOutput(out Output)`
+
+Provide an output stream for displaying the progress bar. `Output` is essentially an `io.Writer`, but it also exposes a `ClearLine()` function to clear the current line of output and return the cursor to the first index. By default, this uses `os.Stdout`.
+
+### `WithFormat(f string)`
 
 Provide an ordering of verbs to be used when outputting the progress bar. You can choose from the standard included verbs `:bar`, `:progress`, and `:rate`, or you can provide your own verbs using the `Ctx` helper (verbs must always be prefixed with `:`):
 
