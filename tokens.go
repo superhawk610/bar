@@ -25,6 +25,7 @@ type spaceToken struct{}
 type barToken struct{}
 type percentToken struct{}
 type rateToken struct{}
+type etaToken struct{}
 type customVerbToken struct {
 	verb string
 }
@@ -135,6 +136,8 @@ func tokenFromString(s string, customVerbs []string) (token, bool) {
 		return percentToken{}, true
 	case "rate":
 		return rateToken{}, true
+	case "eta":
+		return etaToken{}, true
 	}
 
 	// check for custom verbs
@@ -171,6 +174,14 @@ func (t rateToken) print(b *Bar) string {
 	return fmt.Sprintf("%.1f", b.rate)
 }
 
+func (t etaToken) print(b *Bar) string {
+	if b.eta == 0 {
+		return ""
+	}
+
+	return b.eta.String()
+}
+
 func (t customVerbToken) print(b *Bar) string {
 	for _, def := range b.context {
 		if def.verb == t.verb {
@@ -200,6 +211,10 @@ func (t percentToken) debug(b *Bar) string {
 
 func (t rateToken) debug(b *Bar) string {
 	return fmt.Sprintf("<rateToken \"%s\">", t.print(b))
+}
+
+func (t etaToken) debug(b *Bar) string {
+	return fmt.Sprintf("<etaToken \"%s\">", t.print(b))
 }
 
 func (t customVerbToken) debug(b *Bar) string {

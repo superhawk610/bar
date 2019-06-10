@@ -141,6 +141,16 @@ Output the total progress rate (in completed ticks per second).
 
 **NOTE:** This verb does not display a unit by default, so you'll need to provide your own units (eg - `ops/s`).
 
+#### `:eta`
+
+Output the estimated time remaining before completion (formatted by `time.Duration.String()`).
+
+```
+16m28s
+```
+
+Until the bar has established a rate of progress, this verb won't display anything.
+
 #### Custom Verbs
 
 You can provide your own verbs when defining a format. Custom verbs must be prefixed with a colon `:`. You may not use any of the standard verbs as custom verbs.

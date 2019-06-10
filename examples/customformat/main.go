@@ -8,10 +8,10 @@ import (
 )
 
 func main() {
-	n := 20
+	n := 2000
 	b := bar.NewWithOpts(
 		bar.WithDimensions(n, 30),
-		bar.WithFormat(" loading... :percent :bar :rate "),
+		bar.WithFormat(" loading... :percent :bar :rate/s :eta "),
 	)
 
 	fmt.Println()

@@ -18,6 +18,7 @@ type Bar struct {
 	closed                     bool
 	startedAt                  time.Time
 	rate                       float64
+	eta                        time.Duration
 	formatString               string
 	format                     []token
 	context                    []*ContextValue
@@ -41,7 +42,7 @@ func Ctx(verb string, value interface{}) *ContextValue {
 		panic(fmt.Sprintf("don't prefix your custom verb declaration with a `:`, it's implied (at %s)", verb))
 	}
 
-	if verb == "bar" || verb == "percent" || verb == "rate" {
+	if verb == "bar" || verb == "percent" || verb == "rate" || verb == "eta" {
 		panic(fmt.Sprintf(":%s is a reserved verb, please choose another name", verb))
 	}
 
@@ -103,6 +104,7 @@ func (b *Bar) Update(progress int, ctx Context) {
 
 	duration := time.Now().Sub(b.startedAt)
 	b.rate = float64(b.progress) / duration.Seconds()
+	b.eta = time.Duration(float64(b.total-b.progress)/b.rate) * time.Second
 
 	b.progress = progress
 
