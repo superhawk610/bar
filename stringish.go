@@ -16,15 +16,13 @@ type stringStringer struct {
 }
 
 func newStringish(content interface{}) *stringish {
-	switch content.(type) {
+	switch content := content.(type) {
 	case string:
 		return &stringish{
-			content: &stringStringer{s: content.(string)},
+			content: &stringStringer{s: content},
 		}
 	case fmt.Stringer:
-		return &stringish{
-			content: content.(fmt.Stringer),
-		}
+		return &stringish{content}
 	default:
 		panic(fmt.Sprintf("stringish: %v", content))
 	}

@@ -23,6 +23,7 @@ type Bar struct {
 	context                    []*ContextValue
 	callback                   func()
 	output                     Output
+	debug                      bool
 }
 
 // ContextValue is a tuple that defines a substitution for a custom verb
@@ -98,6 +99,8 @@ func (b *Bar) Update(progress int, ctx Context) {
 	b.progress = progress
 
 	if ctx != nil {
+		fmt.Println("overriding ctx")
+		fmt.Println(len(ctx))
 		b.context = ctx
 		b.format = tokenize(b.formatString, ctx.customVerbs())
 	}
@@ -162,7 +165,11 @@ func (b *Bar) String() string {
 	var buf bytes.Buffer
 
 	for _, s := range b.format {
-		buf.WriteString(s.print(b))
+		if b.debug {
+			buf.WriteString(s.debug(b))
+		} else {
+			buf.WriteString(s.print(b))
+		}
 	}
 
 	return buf.String()

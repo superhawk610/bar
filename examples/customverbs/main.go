@@ -19,8 +19,8 @@ func main() {
 
 	for i := 0; i < n; i++ {
 		b.TickAndUpdate(bar.Context{
-			bar.Ctx(":hello", "Hello,"),
-			bar.Ctx(":world", "world!"),
+			bar.Ctx("hello", "Hello,"),
+			bar.Ctx("world", "world!"),
 		})
 		time.Sleep(500 * time.Millisecond)
 	}

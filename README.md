@@ -36,6 +36,44 @@ func main() {
 
 There are additional examples of more advanced usage in the [examples](examples) directory.
 
+## Colored Output
+
+This package works well with color libraries like [ttacon/chalk](https://github.com/ttacon/chalk). In order to get the output displayed in the GIF above, you'd use it like so:
+
+```go
+package main
+
+import (
+	"time"
+
+  "github.com/superhawk610/bar"
+  "github.com/ttacon/chalk"
+)
+
+func main() {
+	n := 20
+	b := bar.New(
+    bar.WithDimensions(20, 20),
+    bar.WithFormat(
+      fmt.Sprintf(
+        " %sloading...%s :percent :bar %s:rate ops/s%s ",
+        chalk.Blue,
+        chalk.Reset,
+        chalk.Green,
+        chalk.Reset,
+      )
+    )
+  )
+
+	for i := 0; i < n; i++ {
+		b.Tick()
+		time.Sleep(500 * time.Millisecond)
+	}
+
+	b.Done()
+}
+```
+
 ## Configuration
 
 This package uses the [functional options pattern](https://halls-of-valhalla.org/beta/articles/functional-options-pattern-in-go,54/) to support incremental configuration. To create a new instance of `bar` with options, use the `bar.NewWithOpts` function and provide any number of configuration augments (listed below).
@@ -120,8 +158,8 @@ Then, whenever ticking or updating your progress bar, provide a `Context` slice 
 
 ```go
 b.TickAndUpdate(bar.Context{
-	bar.Ctx(":hello", "Hello,"),
-	bar.Ctx(":world", "world!"),
+	bar.Ctx("hello", "Hello,"),
+	bar.Ctx("world", "world!"),
 })
 ```
 

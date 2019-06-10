@@ -17,6 +17,7 @@ type barOpts struct {
 	callback                   func()
 	output                     Output
 	context                    Context
+	debug                      bool
 }
 
 type augment func(*barOpts)
@@ -82,6 +83,7 @@ func NewWithOpts(opts ...func(o *barOpts)) *Bar {
 		callback:     o.callback,
 		output:       o.output,
 		context:      o.context,
+		debug:        o.debug,
 	}
 }
 
@@ -140,5 +142,14 @@ func WithOutput(out Output) augment {
 func WithContext(ctx Context) augment {
 	return func(o *barOpts) {
 		o.context = ctx
+	}
+}
+
+// WithDebug augments an options constructor by setting the internal
+// debug flag to true; this will display the list of internal tokens recognized
+// on each Tick/Update in place of the standard output
+func WithDebug() augment {
+	return func(o *barOpts) {
+		o.debug = true
 	}
 }

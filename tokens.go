@@ -13,7 +13,7 @@ import (
 type tokens []token
 
 type token interface {
-	fmt.Stringer
+	debug(*Bar) string
 	print(*Bar) string
 }
 
@@ -194,36 +194,26 @@ func (t literalToken) print(_ *Bar) string {
 	return t.content
 }
 
-func (t tokens) String() string {
-	var buf bytes.Buffer
-
-	for _, tkn := range t {
-		buf.WriteString(tkn.String())
-	}
-
-	return buf.String()
+func (t spaceToken) debug(b *Bar) string {
+	return " "
 }
 
-func (t spaceToken) String() string {
-	return "{}"
+func (t barToken) debug(b *Bar) string {
+	return fmt.Sprintf("<barToken p={%d} t={%d}>", b.progress, b.total)
 }
 
-func (t barToken) String() string {
-	return "{barToken}"
+func (t percentToken) debug(b *Bar) string {
+	return fmt.Sprintf("<percentToken \"%s\">", t.print(b))
 }
 
-func (t percentToken) String() string {
-	return "{percentToken}"
+func (t rateToken) debug(b *Bar) string {
+	return fmt.Sprintf("<rateToken \"%s\">", t.print(b))
 }
 
-func (t rateToken) String() string {
-	return "{rateToken}"
+func (t customVerbToken) debug(b *Bar) string {
+	return fmt.Sprintf("<customVerbToken verb=\"%s\" value=\"%s\">", t.verb, t.print(b))
 }
 
-func (t customVerbToken) String() string {
-	return fmt.Sprintf("{customVerbToken %s}", t.verb)
-}
-
-func (t literalToken) String() string {
-	return fmt.Sprintf("{literalToken %s}", t.content)
+func (t literalToken) debug(b *Bar) string {
+	return fmt.Sprintf("<literalToken \"%s\">", t.content)
 }
