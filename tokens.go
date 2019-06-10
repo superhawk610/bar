@@ -77,23 +77,21 @@ func (f *tokenFormat) readAction(customVerbs []string) (token, error) {
 		r, _, err := f.stream.ReadRune()
 
 		if err != nil {
-			if err == io.EOF {
-				t, _ := tokenFromString(verb.String(), customVerbs)
-				return t, nil
-			}
-
 			return nil, err
 		}
 
 		verb.Write([]byte(string([]rune{r})))
 
-		if t, literal := tokenFromString(verb.String(), customVerbs); !literal {
+		if t, ok := tokenFromString(verb.String(), customVerbs); ok {
 			return t, nil
 		}
 
 		if f.readSeparator() {
-			t, _ := tokenFromString(verb.String(), customVerbs)
-			return t, nil
+			if t, ok := tokenFromString(verb.String(), customVerbs); ok {
+				return t, nil
+			}
+
+			return literalToken{":" + verb.String()}, nil
 		}
 	}
 }
@@ -107,19 +105,13 @@ func (f *tokenFormat) readLiteral(prefix rune) (token, error) {
 		r, _, err := f.stream.ReadRune()
 
 		if err != nil {
-			if err == io.EOF {
-				t, _ := tokenFromString(value.String(), nil)
-				return t, nil
-			}
-
 			return nil, err
 		}
 
 		value.Write([]byte(string([]rune{r})))
 
 		if f.readSeparator() {
-			t, _ := tokenFromString(value.String(), nil)
-			return t, nil
+			return literalToken{value.String()}, nil
 		}
 	}
 }
@@ -132,27 +124,27 @@ func (f *tokenFormat) readSeparator() bool {
 	return false
 }
 
-// tokenFromString will return the token parsed from s; literal is true as
-// long as the token is not a literal
+// tokenFromString will return the token parsed from s, as well as a
+// bool determining whether a valid token was found
 func tokenFromString(s string, customVerbs []string) (token, bool) {
 	// check for standard verbs
 	switch s {
 	case "bar":
-		return barToken{}, false
+		return barToken{}, true
 	case "percent":
-		return percentToken{}, false
+		return percentToken{}, true
 	case "rate":
-		return rateToken{}, false
+		return rateToken{}, true
 	}
 
 	// check for custom verbs
 	for _, verb := range customVerbs {
 		if s == verb {
-			return customVerbToken{verb}, false
+			return customVerbToken{verb}, true
 		}
 	}
 
-	return literalToken{s}, true
+	return nil, false
 }
 
 func (t spaceToken) print(_ *Bar) string {
