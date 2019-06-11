@@ -109,7 +109,7 @@ Provide an initial value for the bar's context (read more about how to use conte
 
 ### `WithFormat(f string)`
 
-Provide an ordering of verbs to be used when outputting the progress bar. You can choose from the standard included verbs `:bar`, `:progress`, and `:rate`, or you can provide your own verbs using the `Ctx` helper (verbs must always be prefixed with `:`):
+Provide an ordering of verbs to be used when outputting the progress bar. You can choose from the standard included verbs `:bar`, `:progress`, `:rate`, and `:eta`, or you can provide your own verbs using the `Ctx` helper. Verbs must always be prefixed with `:`.
 
 #### Standard Verbs
 
