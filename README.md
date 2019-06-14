@@ -1,5 +1,7 @@
 # bar
 
+![Travis (.org)](https://img.shields.io/travis/superhawk610/bar.svg?style=popout-square)
+
 This package is a port of the [progress](https://github.com/visionmedia/node-progress) package, written in Golang.
 
 ![terminal demo](assets/bar.gif)
