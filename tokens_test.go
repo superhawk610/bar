@@ -28,7 +28,31 @@ func TestTokenize(t *testing.T) {
 		got := tokenize(testCase.formatString, nil)
 		if !reflect.DeepEqual(got, testCase.expected) {
 			t.Errorf(
-				"[%d] tokenize(%#v, nil) = %#v; want %#v",
+				"[%d] tokenize(%#v, nil)\n\n  got %#v\n  want %#v",
+				i,
+				testCase.formatString,
+				got,
+				testCase.expected,
+			)
+		}
+	}
+}
+
+func TestTokenizeWithBoundaryCharacters(t *testing.T) {
+	var testCases = []struct {
+		formatString string
+		expected     tokens
+	}{
+		{"(:bar", tokens{literalToken{"("}, barToken{}}},
+		{"(:bar)", tokens{literalToken{"("}, barToken{}, literalToken{")"}}},
+		{":bar (:eta remaining)", tokens{barToken{}, spaceToken{}, literalToken{"("}, etaToken{}, spaceToken{}, literalToken{"remaining)"}}},
+	}
+
+	for i, testCase := range testCases {
+		got := tokenize(testCase.formatString, nil)
+		if !reflect.DeepEqual(got, testCase.expected) {
+			t.Errorf(
+				"[%d] tokenize(%#v, nil)\n\n  got %#v\n  want %#v",
 				i,
 				testCase.formatString,
 				got,
@@ -53,7 +77,7 @@ func TestTokenizeWithCustomVerbs(t *testing.T) {
 		got := tokenize(testCase.formatString, testCase.customVerbs)
 		if !reflect.DeepEqual(got, testCase.expected) {
 			t.Errorf(
-				"[%d] tokenize(%#v, %#v) = %#v; want %#v",
+				"[%d] tokenize(%#v, %#v)\n\n  got %#v\n  want %#v",
 				i,
 				testCase.formatString,
 				testCase.customVerbs,

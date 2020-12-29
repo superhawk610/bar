@@ -40,7 +40,7 @@ func NewWithFormat(t int, f string) *Bar {
 		formatString: f,
 		format:       tokenize(f, nil),
 		callback:     noop,
-		output:       &stdout{},
+		output:       initializeStdout(),
 	}
 }
 
@@ -55,7 +55,7 @@ func NewWithOpts(opts ...func(o *barOpts)) *Bar {
 		end:          ")",
 		formatString: defaultFormat,
 		callback:     noop,
-		output:       &stdout{},
+		output:       initializeStdout(),
 	}
 
 	for _, aug := range opts {

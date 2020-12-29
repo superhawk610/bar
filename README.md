@@ -192,6 +192,10 @@ Debugging crowded layouts can be difficult, so this helper swaps each bar compon
  <barToken p={4} t={10}> <percentToken "40.0%"> <customVerbToken verb="hello" value="Hello!">
 ```
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
+
 ## License
 
 Copyright &copy; 2019 Aaron Ross, all rights reserved. View the ISC license [here](LICENSE).
