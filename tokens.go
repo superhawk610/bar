@@ -33,6 +33,8 @@ type literalToken struct {
 	content string
 }
 
+// tokenize takes a format string and a slice of custom verbs (if any)
+// and returns a slice of tokens that represent the format string.
 func tokenize(f string, customVerbs []string) tokens {
 	var t tokens
 
@@ -53,6 +55,9 @@ func tokenize(f string, customVerbs []string) tokens {
 	}
 }
 
+// nextToken consumes characters from the input until a complete token is
+// found and returned. If an error is encountered, it is returned alongside
+// a `nil` token.
 func (f *tokenFormat) nextToken(customVerbs []string) (token, error) {
 	for {
 		r, _, err := f.stream.ReadRune()
@@ -71,6 +76,9 @@ func (f *tokenFormat) nextToken(customVerbs []string) (token, error) {
 	}
 }
 
+// readAction will consume characters from the input until it finds a valid
+// action verb, returning the corresponding verb token. If no valid verb is
+// found when the input runs out, a literal token will be returned instead.
 func (f *tokenFormat) readAction(customVerbs []string) (token, error) {
 	var verb bytes.Buffer
 
@@ -97,12 +105,19 @@ func (f *tokenFormat) readAction(customVerbs []string) (token, error) {
 	}
 }
 
+// readLiteral will consume characters from the input until it encounters
+// a separator character (see `readSeparator`), returning a literal token
+// containing the characters it consumed.
 func (f *tokenFormat) readLiteral(prefix rune) (token, error) {
 	var value bytes.Buffer
 
 	value.Write([]byte(string([]rune{prefix})))
 
 	for {
+		if f.readSeparator() {
+			return literalToken{value.String()}, nil
+		}
+
 		r, _, err := f.stream.ReadRune()
 
 		if err != nil {
@@ -110,23 +125,22 @@ func (f *tokenFormat) readLiteral(prefix rune) (token, error) {
 		}
 
 		value.Write([]byte(string([]rune{r})))
-
-		if f.readSeparator() {
-			return literalToken{value.String()}, nil
-		}
 	}
 }
 
+// readSeparator looks for a separator character (one of ` `, `:`, or *EOF*), returning
+// `true` if one is found and `false` otherwise. It does not consume any characters
+// from the input.
 func (f *tokenFormat) readSeparator() bool {
 	p, err := f.stream.Peek(1)
-	if err != nil || p[0] == ' ' || p[0] == ':' {
+	if err != nil || p[0] == byte(' ') || p[0] == byte(':') {
 		return true
 	}
 	return false
 }
 
 // tokenFromString will return the token parsed from s, as well as a
-// bool determining whether a valid token was found
+// bool determining whether a valid token was found.
 func tokenFromString(s string, customVerbs []string) (token, bool) {
 	// check for standard verbs
 	switch s {
@@ -149,6 +163,10 @@ func tokenFromString(s string, customVerbs []string) (token, bool) {
 
 	return nil, false
 }
+
+//
+// print implementations
+//
 
 func (t spaceToken) print(_ *Bar) string {
 	return " "
@@ -196,6 +214,10 @@ func (t customVerbToken) print(b *Bar) string {
 func (t literalToken) print(_ *Bar) string {
 	return t.content
 }
+
+//
+// debug implementations
+//
 
 func (t spaceToken) debug(b *Bar) string {
 	return " "
