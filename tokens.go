@@ -193,10 +193,6 @@ func (t rateToken) print(b *Bar) string {
 }
 
 func (t etaToken) print(b *Bar) string {
-	if b.eta == 0 {
-		return ""
-	}
-
 	return b.eta.String()
 }
 
