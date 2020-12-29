@@ -72,7 +72,7 @@ func New(t int) *Bar {
 		formatString: defaultFormat,
 		format:       tokenize(defaultFormat, []string{}),
 		callback:     noop,
-		output:       &stdout{},
+		output:       initializeStdout(),
 	}
 }
 

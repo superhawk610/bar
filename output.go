@@ -12,15 +12,21 @@ type Output interface {
 	Printf(format string, vals ...interface{})
 }
 
-type stdout struct{}
+type stdout struct {
+	terminal terminal.Terminal
+}
+
+func initializeStdout() *stdout {
+	return &stdout{}
+}
 
 // ClearLine clears the current output line and returns the cursor
 // to the first index
-func (stdout) ClearLine() {
-	terminal.ClearLine()
+func (s *stdout) ClearLine() {
+	s.terminal.ClearLine()
 }
 
 // Printf accepts a format string and any number of input values
-func (stdout) Printf(format string, vals ...interface{}) {
-	terminal.Overwritef(format, vals...)
+func (s *stdout) Printf(format string, vals ...interface{}) {
+	s.terminal.Overwritef(format, vals...)
 }
