@@ -47,25 +47,25 @@ package main
 
 import (
 	"time"
-
-  "github.com/superhawk610/bar"
-  "github.com/ttacon/chalk"
+	"fmt"
+	"github.com/superhawk610/bar"
+	"github.com/ttacon/chalk"
 )
 
 func main() {
 	n := 20
-	b := bar.New(
-    bar.WithDimensions(20, 20),
-    bar.WithFormat(
-      fmt.Sprintf(
-        " %sloading...%s :percent :bar %s:rate ops/s%s ",
-        chalk.Blue,
-        chalk.Reset,
-        chalk.Green,
-        chalk.Reset,
-      )
-    )
-  )
+	b := bar.NewWithOpts(
+		bar.WithDimensions(20, 20),
+		bar.WithFormat(
+			fmt.Sprintf(
+				" %sloading...%s :percent :bar %s:rate ops/s%s ",
+				chalk.Blue,
+				chalk.Reset,
+				chalk.Green,
+				chalk.Reset,
+			),
+		),
+	)
 
 	for i := 0; i < n; i++ {
 		b.Tick()
